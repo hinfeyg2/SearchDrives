@@ -6,40 +6,70 @@ import sqlite3 as lite
 import sys
 import datetime
 
+dbpath = "./drivelibrary.db"
 
 class drivelibrary:
 	
 	def __init__(self):
 		
-		self.con = lite.connect('/Users/gavinhinfey/Desktop/drivelibrary.db' ,detect_types=lite.PARSE_DECLTYPES)
+		global dbpath
+		
+		self.con = lite.connect(dbpath ,detect_types=lite.PARSE_DECLTYPES)
 	
 	def createDBEntry(self, job, driveNum):
 		
 		with self.con:
 			cur = self.con.cursor()
 			
+			# Check to see if db exists.
 			try:
 				cur.execute("CREATE TABLE DriveLibrary(CreateTime TEXT ,JobName TEXT, LibNum INT, FilePath TEXT, FileName TEXT)")
 			
 			except:
+				
 				pass
 			
-			for i in self.docFiles:
+			
+			# Check to see if my new drive has already been added to the library.
+			if self.queryDBlibnum(driveNum):
 				
-				date = datetime.datetime.today()
-
-				cats = []
-				cats = i.split('\\')
-				filename = cats[-1]
-				del cats[-1]
-				path = ''
-				for j in cats:
-					path += j + '\\'
-				dogs = "INSERT INTO DriveLibrary VALUES('%s', '%s', '%s', '%s', '%s')" % (date, job, driveNum, path, filename)
-				cur.execute(str(dogs))
+				deleteVal = "DELETE FROM DriveLibrary WHERE LibNum=%s" % (driveNum)
+				cur.execute(deleteVal)
 				
+				self.addquery(job, driveNum)
+			
+			else:
+				
+				self.addquery(job, driveNum)
+	
+	def addDrive(self, job, driveNum, drivePath):
+		
+		proc = subprocess.Popen('ls -R ' + drivePath, shell=True, stdout=subprocess.PIPE)
 
-			cur.close()	
+		outputlines = filter(lambda x:len(x)>0,(line.strip() for line in proc.stdout))
+		
+		print outputlines
+
+	def addquery(self, job, driveNum):
+			
+			with self.con:
+				cur = self.con.cursor()
+			
+				for i in self.docFiles:
+
+					date = datetime.datetime.today()
+
+					cats = []
+					cats = i.split('\\')
+					filename = cats[-1]
+					del cats[-1]
+					path = ''
+					for j in cats:
+						path += j + '\\'
+					dogs = "INSERT INTO DriveLibrary VALUES('%s', '%s', '%s', '%s', '%s')" % (date, job, driveNum, path, filename)
+					cur.execute(str(dogs))
+				
+				cur.close()	
 		
 	def parseEDL(self, queryDoc):
 		
@@ -60,7 +90,7 @@ class drivelibrary:
     		rows = cur.execute("SELECT * from DriveLibrary where FileName LIKE ?",(term,))
     		found = rows.fetchall()
     		for i in found:
-    			return i
+    			print i
     			
 	def queryDBdate(self, date):
 
@@ -84,7 +114,7 @@ class drivelibrary:
     		rows = cur.execute("SELECT * from DriveLibrary where JobName LIKE ?",(term,))
     		found = rows.fetchall()
     		for i in found:
-    			return i
+    			print i
 			
 	def queryDBpath(self, path):
 	
@@ -96,8 +126,8 @@ class drivelibrary:
     		rows = cur.execute("SELECT * from DriveLibrary where FilePath LIKE ?",(term,))
     		found = rows.fetchall()
     		for i in found:
-    			return i
-			
+    			print i
+					
 	def queryDBlibnum(self, libnum):
 		
 		with self.con:
@@ -106,8 +136,10 @@ class drivelibrary:
 			rows = cur.execute("SELECT * from DriveLibrary where LibNum = '%s'" % (libnum))
 			found = rows.fetchall()
 			for i in found:
-				return i
 				
+				print i
+	
+	#Has a bug.
 	def queryDBglobal(self, searchQuery):
 
 		foundList = []
@@ -117,14 +149,18 @@ class drivelibrary:
 		foundList.append(self.queryDBjob(searchQuery))
 		foundList.append(self.queryDBpath(searchQuery))
 		foundList.append(self.queryDBlibnum(searchQuery))
-		"""
-		for i in foundList:
-			if i == None:
-				foundList[i].pop()
-		
-		print foundList
-		"""
-				
+	
+	#This delete method doesn't work.			
 	def deleteDBEntry(self, driveNum):
 		
-		print "CATS"
+		
+		driveNum = int(driveNum)
+		cur = self.con.cursor()
+		deleteVal = "DELETE FROM DriveLibrary WHERE LibNum=%s" % (driveNum)
+		cur.execute(deleteVal)
+		print "Great!"		
+		cur.close()
+		
+	def openDB(self, dbpath):
+		
+		self.con = lite.connect(dbpath ,detect_types=lite.PARSE_DECLTYPES)
