@@ -10,8 +10,6 @@ class MainWindow(wx.Frame):
 	def __init__(self, parent, title):
 		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = "Drive Library Menu", pos = wx.DefaultPosition, size = wx.Size( 350,400 ), style = wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX )
 		
-		
-		
 		gSizer = wx.GridSizer( 0, 2, 0, 0 )
 		
 		self.m_bpButton1 = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( "/Users/gavinhinfey/GitHub/SearchDrives/ICONS/FindDatabase.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
@@ -95,22 +93,20 @@ class DBWindow(wx.Frame):
 	
 	def __init__(self, parent, title):
 		
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size(350,400), style = wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX )
-		
-		
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = "Connect Database", pos = wx.DefaultPosition, size = wx.Size(350,400), style = wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX )
 		
 		self.m_statusBar1 = self.CreateStatusBar( 1, wx.ST_SIZEGRIP, wx.ID_ANY )
 		self.m_menubar1 = wx.MenuBar( 0 )
 		self.SetMenuBar( self.m_menubar1 )
 		
-		openButton = wx.Button(self, -1, 'Find Data Base', (50,100))
+		openButton = wx.Button(self, -1, 'Find Data Base', (10,50))
 		self.Bind(wx.EVT_BUTTON, self.NavToDB, openButton)
 		
 		if searchdrivetest.testConnection():
-			self.connectionStatus = wx.StaticText(self, -1, "Connected To DB",(50,50))
+			self.connectionStatus = wx.StaticText(self, -1, "Connected To DB",(15,20))
 			openButton.Enable(False)
 		else:
-			self.connectionStatus = wx.StaticText(self, -1, "Not Connected To DB",(50,50))
+			self.connectionStatus = wx.StaticText(self, -1, "Not Connected To DB",(15,20))
 			openButton.Enable(True)
 		
 		self.m_bpButton28 = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( "/Users/gavinhinfey/GitHub/SearchDrives/ICONS/backbutton.png", wx.BITMAP_TYPE_ANY ), (20,270), wx.DefaultSize, wx.BU_AUTODRAW )
@@ -139,42 +135,63 @@ class DriveWindow(wx.Frame):
 	
 	def __init__(self, parent, title):
 		
-		wx.Frame.__init__ (self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size(350,400), style = wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX )
+		wx.Frame.__init__ (self, parent, id = wx.ID_ANY, title = "Add Drive To Library", pos = wx.DefaultPosition, size = wx.Size(350,400), style = wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX )
 		
 		self.m_statusBar1 = self.CreateStatusBar( 1, wx.ST_SIZEGRIP, wx.ID_ANY )
 		self.m_menubar1 = wx.MenuBar( 0 )
 		self.SetMenuBar( self.m_menubar1 )
 		
-		self.openDrive = wx.Button(self, -1, 'Navigate to Root of Drive', (50,100))
+		self.openDrive = wx.Button(self, -1, 'Navigate to Root of Drive', (12,15))
 		self.Bind(wx.EVT_BUTTON, self.NavToDrive, self.openDrive)
 
-		self.DriveStatus = wx.StaticText(self, -1, "",(50,50))
+		self.DriveStatus = wx.StaticText(self, -1, "",(20,57))
 		#SHIT
-		self.m_bpButton26 = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( "/Users/gavinhinfey/GitHub/SearchDrives/ICONS/backbutton.png", wx.BITMAP_TYPE_ANY ),(20,170), wx.DefaultSize, wx.BU_AUTODRAW )
+		self.m_bpButton26 = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( "/Users/gavinhinfey/GitHub/SearchDrives/ICONS/backbutton.png", wx.BITMAP_TYPE_ANY ),(18,180), wx.DefaultSize, wx.BU_AUTODRAW )
 		self.Bind(wx.EVT_BUTTON, self.ParseDir, self.m_bpButton26)
-
-		self.m_bpButton28 = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( "/Users/gavinhinfey/GitHub/SearchDrives/ICONS/backbutton.png", wx.BITMAP_TYPE_ANY ),(20,270), wx.DefaultSize, wx.BU_AUTODRAW )
+		self.m_bpButton26.Enable(False)
+	
+		self.m_bpButton28 = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( "/Users/gavinhinfey/GitHub/SearchDrives/ICONS/backbutton.png", wx.BITMAP_TYPE_ANY ),(18,270), wx.DefaultSize, wx.BU_AUTODRAW )
 		self.Bind(wx.EVT_BUTTON, self.ButtonReturn1, self.m_bpButton28)
-
+		
+		
+		self.txt1 = wx.TextCtrl(self, -1, pos=(20,95), size=(140,-1))
+		self.txt1.SetValue('library number')
+		self.txt1.Enable(False)
+		
+		self.txt2 = wx.TextCtrl(self, -1, pos=(20,140),size=(140,-1))
+		self.txt2.SetValue('job name')
+		self.txt2.Enable(False)
+		
 		self.Layout()
 		
 		self.Centre(wx.BOTH)
 		self.Show(True)
 	
-	
 	def ParseDir(self, event):
-		
+		list = []
 		r = searchdrives.drivelibrary()
-		r.addDrive("TestJob1", 000000, "/Users/gavinhinfey/GitHub/")
+		self.EnteredNum = self.txt1.GetValue()
+		self.EnteredName = self.txt2.GetValue()
+		
+		list = r.addDrive(self.chosendir)
+		
+		r.parseEDL(list)
+		
+		r.createDBEntry(self.EnteredName, self.EnteredNum)
+		
+		self.m_bpButton26.Enable(False)
 	
 	def NavToDrive(self, event):
 		
 		dirDirname = ''
 		dlg = wx.DirDialog(self, "Choose Root of Drive:", dirDirname, wx.DD_DIR_MUST_EXIST, (50,50), (50,50))
 		if dlg.ShowModal() == wx.ID_OK:
-			searchdrives.dbpath = dlg.GetPath()
-			self.DriveStatus.SetLabel(searchdrives.dbpath)
-			self.openDrive.Enable(False)
+			self.chosendir = dlg.GetPath()
+			self.DriveStatus.SetLabel(self.chosendir)
+			self.txt2.Enable(True)
+			self.txt1.Enable(True)
+			self.m_bpButton26.Enable(True)
+			self.m_bpButton28.Enable(True)
 	
 	def ButtonReturn1(self, event):
 		frame1.m_statusBar1.SetStatusText("Search With EDL")

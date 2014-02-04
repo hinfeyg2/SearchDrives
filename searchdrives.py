@@ -13,7 +13,6 @@ class drivelibrary:
 	def __init__(self):
 		
 		global dbpath
-		
 		self.con = lite.connect(dbpath ,detect_types=lite.PARSE_DECLTYPES)
 	
 	def createDBEntry(self, job, driveNum):
@@ -42,13 +41,14 @@ class drivelibrary:
 				
 				self.addquery(job, driveNum)
 	
-	def addDrive(self, job, driveNum, drivePath):
+	def addDrive(self, drivePath):
 		
 		proc = subprocess.Popen('ls -R ' + drivePath, shell=True, stdout=subprocess.PIPE)
 
 		outputlines = filter(lambda x:len(x)>0,(line.strip() for line in proc.stdout))
-		
-		print outputlines
+
+		return outputlines 
+
 
 	def addquery(self, job, driveNum):
 			
@@ -71,9 +71,8 @@ class drivelibrary:
 				
 				cur.close()	
 		
-	def parseEDL(self, queryDoc):
+	def parseEDL(self, queryList):
 		
-		queryList = open(queryDoc, 'r+')
 		self.docFiles = []
 		for line in queryList:
 			line = str(line)
