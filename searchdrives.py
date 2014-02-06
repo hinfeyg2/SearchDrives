@@ -100,8 +100,7 @@ class drivelibrary:
     			return i
     		"""
     		return found
-    		
-    			
+    				
 	def queryDBdate(self, date):
 
 		with self.con:    
