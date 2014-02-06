@@ -5,6 +5,7 @@ import subprocess
 import sqlite3 as lite
 import sys
 import datetime
+import unicodedata
 
 dbpath = "./drivelibrary.db"
 
@@ -43,13 +44,19 @@ class drivelibrary:
 	
 	def addDrive(self, drivePath):
 		
-		proc = subprocess.Popen('ls -R ' + drivePath, shell=True, stdout=subprocess.PIPE)
-
+		os.chdir(drivePath)
+		proc = subprocess.Popen('find . -type f', shell=True, stdout=subprocess.PIPE)
 		outputlines = filter(lambda x:len(x)>0,(line.strip() for line in proc.stdout))
 
 		return outputlines 
-
-
+	
+	def not_combining(self, char):
+		return unicodedata.category(char) != 'Mn'
+        
+	def strip_accents(self, text, encoding):
+		unicode_text= unicodedata.normalize('NFD', text.decode(encoding))
+		return filter(self, not_combining, unicode_text).encode(encoding)
+		
 	def addquery(self, job, driveNum):
 			
 			with self.con:
@@ -60,7 +67,7 @@ class drivelibrary:
 					date = datetime.datetime.today()
 
 					cats = []
-					cats = i.split('\\')
+					cats = i.split('/')
 					filename = cats[-1]
 					del cats[-1]
 					path = ''
@@ -88,8 +95,12 @@ class drivelibrary:
     		term = '%' + FileString + '%'
     		rows = cur.execute("SELECT * from DriveLibrary where FileName LIKE ?",(term,))
     		found = rows.fetchall()
+    		"""
     		for i in found:
-    			print i
+    			return i
+    		"""
+    		return found
+    		
     			
 	def queryDBdate(self, date):
 
@@ -100,8 +111,11 @@ class drivelibrary:
 			term = '%' + date + '%'
 			rows = cur.execute("SELECT * from DriveLibrary where CreateTime LIKE ?",(term,))
 			found = rows.fetchall()
+			"""
 			for i in found:
 				return i
+			"""
+			return found
 			
 	def queryDBjob(self, job):
 	
@@ -112,8 +126,11 @@ class drivelibrary:
    			term = '%' + job + '%'
     		rows = cur.execute("SELECT * from DriveLibrary where JobName LIKE ?",(term,))
     		found = rows.fetchall()
+    		"""
     		for i in found:
-    			print i
+    			return i
+    		"""
+    		return found
 			
 	def queryDBpath(self, path):
 	
@@ -124,8 +141,11 @@ class drivelibrary:
    			term = '%' + path + '%'
     		rows = cur.execute("SELECT * from DriveLibrary where FilePath LIKE ?",(term,))
     		found = rows.fetchall()
+    		"""
     		for i in found:
-    			print i
+    			return i
+    		"""
+    		return found
 					
 	def queryDBlibnum(self, libnum):
 		
@@ -134,9 +154,11 @@ class drivelibrary:
 			cur = self.con.cursor()
 			rows = cur.execute("SELECT * from DriveLibrary where LibNum = '%s'" % (libnum))
 			found = rows.fetchall()
+			"""
 			for i in found:
-				
-				print i
+				return i
+			"""
+			return found
 	
 	#Has a bug.
 	def queryDBglobal(self, searchQuery):
@@ -148,7 +170,9 @@ class drivelibrary:
 		foundList.append(self.queryDBjob(searchQuery))
 		foundList.append(self.queryDBpath(searchQuery))
 		foundList.append(self.queryDBlibnum(searchQuery))
-	
+		return foundList
+		
+		
 	#This delete method doesn't work.			
 	def deleteDBEntry(self, driveNum):
 		

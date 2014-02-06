@@ -13,8 +13,10 @@ def test():
 	#r.deleteDBEntry(000003)
 	#r = drivelibrary()
 	
-	r = searchdrives.drivelibrary("./drivelibrary.db")
-	r.addDrive("TestJob1", 000000, "/Users/gavinhinfey/GitHub/")
+	r = searchdrives.drivelibrary()
+	#r.addDrive("TestJob1", 000000, "/Users/gavinhinfey/GitHub/")
+	print r.queryDBfile("GOPR0084A02.CE270C452014DB0.mxf")
+	
 
 def testConnection():
 	
