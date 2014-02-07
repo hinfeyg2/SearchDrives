@@ -44,11 +44,10 @@ class drivelibrary:
 	
 	def addDrive(self, drivePath):
 		
-		os.chdir(drivePath)
-		proc = subprocess.Popen('find . -type f', shell=True, stdout=subprocess.PIPE)
+		proc = subprocess.Popen('dir /a-d /s /b /ogen ' + '"' + str(drivePath) + '"', shell=True, stdout=subprocess.PIPE)
 		outputlines = filter(lambda x:len(x)>0,(line.strip() for line in proc.stdout))
-
-		return outputlines 
+		print outputlines
+		return outputlines
 	
 	def not_combining(self, char):
 		return unicodedata.category(char) != 'Mn'
@@ -169,9 +168,9 @@ class drivelibrary:
 		foundList.append(self.queryDBjob(searchQuery))
 		foundList.append(self.queryDBpath(searchQuery))
 		foundList.append(self.queryDBlibnum(searchQuery))
+		
 		return foundList
-		
-		
+			
 	#This delete method doesn't work.			
 	def deleteDBEntry(self, driveNum):
 		

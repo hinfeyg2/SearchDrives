@@ -262,11 +262,17 @@ class SearchWindow(wx.Frame):
 		searchSelection = self.combo.GetValue()
 		
 		if searchSelection == "Global":
-			print r.queryDBglobal(self.txt3.GetValue())
+			list = r.queryDBglobal(self.txt3.GetValue())
+			for i in list:
+				for y in i:
+					print y
 		
 		elif searchSelection == "File":
-			print r.queryDBfile(self.txt3.GetValue())
-		
+			found = r.queryDBfile(self.txt3.GetValue())
+			for i in found:
+				for y in i:
+					print y
+			
 		elif searchSelection == "Drives":
 			print r.queryDBlibnum(self.txt3.GetValue())
 		
