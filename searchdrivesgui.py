@@ -12,25 +12,25 @@ class MainWindow(wx.Frame):
 		
 		gSizer = wx.GridSizer( 0, 2, 0, 0 )
 		
-		self.m_bpButton1 = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( "./ICONS/FindDatabase.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		self.m_bpButton1 = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( "./ICONS/FindDatabase.jpg", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
 		self.m_bpButton1.Bind(wx.EVT_BUTTON, self.Button1Select, self.m_bpButton1)
 		self.m_bpButton1.Bind(wx.EVT_ENTER_WINDOW, self.DBRollButtonOn)
 		self.m_bpButton1.Bind(wx.EVT_LEAVE_WINDOW, self.DBRollButtonOff)
 		gSizer.Add( self.m_bpButton1, 0, wx.ALL|wx.ALIGN_CENTER, 5 )
 		
-		self.m_bpButton2 = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( "./ICONS/ScanDrive.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		self.m_bpButton2 = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( "./ICONS/ScanDrive.jpg", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
 		self.Bind(wx.EVT_BUTTON, self.Button2Select, self.m_bpButton2)
 		self.m_bpButton2.Bind(wx.EVT_ENTER_WINDOW, self.DriveRollButtonOn)
 		self.m_bpButton2.Bind(wx.EVT_LEAVE_WINDOW, self.DriveRollButtonOff)
 		gSizer.Add( self.m_bpButton2, 0, wx.ALL|wx.ALIGN_CENTER, 5 )
 		
-		self.m_bpButton3 = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( "./ICONS/SearchWithList.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		self.m_bpButton3 = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( "./ICONS/SearchWithList.jpg", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
 		self.Bind(wx.EVT_BUTTON, self.Button3Select, self.m_bpButton3)
 		self.m_bpButton3.Bind(wx.EVT_ENTER_WINDOW, self.EDLRollButtonOn)
 		self.m_bpButton3.Bind(wx.EVT_LEAVE_WINDOW, self.EDLRollButtonOff)
 		gSizer.Add( self.m_bpButton3, 0, wx.ALL|wx.ALIGN_CENTER, 5 )
 		
-		self.m_bpButton4 = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( "./ICONS/Search.png", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
+		self.m_bpButton4 = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( "./ICONS/Search.jpg", wx.BITMAP_TYPE_ANY ), wx.DefaultPosition, wx.DefaultSize, wx.BU_AUTODRAW )
 		self.Bind(wx.EVT_BUTTON, self.Button4Select, self.m_bpButton4)
 		self.m_bpButton4.Bind(wx.EVT_ENTER_WINDOW, self.SearchRollButtonOn)
 		self.m_bpButton4.Bind(wx.EVT_LEAVE_WINDOW, self.SearchRollButtonOff)
@@ -132,6 +132,7 @@ class DBWindow(wx.Frame):
 		if dlg.ShowModal() == wx.ID_OK:
 			searchdrives.dbpath = dlg.GetPath()
 			self.connectionStatus.SetLabel("Connected To DB")
+			print searchdrives.dbpath
 		
 	def ButtonReturn1(self, event):
 		frame1.m_statusBar1.SetStatusText("Search With EDL")

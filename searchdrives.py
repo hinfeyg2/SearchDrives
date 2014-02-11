@@ -7,7 +7,7 @@ import sys
 import datetime
 import unicodedata
 
-dbpath = "./drivelibrary.db"
+dbpath = "\\\\192.168.1.110\\avid\\GavinH\\SearchDrives\\drivelibrary.db"
 
 class drivelibrary:
 	
@@ -66,7 +66,7 @@ class drivelibrary:
 					date = datetime.datetime.today()
 
 					cats = []
-					cats = i.split('/')
+					cats = i.split('\\')
 					filename = cats[-1]
 					del cats[-1]
 					path = ''
