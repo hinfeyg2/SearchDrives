@@ -170,7 +170,7 @@ class drivelibrary:
 		foundList.append(self.queryDBlibnum(searchQuery))
 		
 		return foundList
-			
+		
 	#This delete method doesn't work.			
 	def deleteDBEntry(self, driveNum):
 		

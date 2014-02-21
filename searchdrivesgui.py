@@ -90,11 +90,12 @@ class MainWindow(wx.Frame):
 		self.Show(False)		
 	
 	def Button4Select(self, event):
-	
-		frame5 = SearchWindow(None, "Search")
+		
+		self.frame5 = SearchWindow(None, "Search")
 		x,y = self.GetPosition() 
-		frame5.SetPosition((x,y)) 
-		self.Show(False)		
+		self.frame5.SetPosition((x,y)) 
+		self.Show(False)	
+		
 		
 class DBWindow(wx.Frame):
 	
@@ -235,7 +236,7 @@ class SearchWindow(wx.Frame):
 	def __init__(self, parent, title):
 		
 		wx.Frame.__init__ (self, parent, id = wx.ID_ANY, title = "Search", pos = wx.DefaultPosition, size = wx.Size(350,400), style = wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX )
-		
+
 		self.m_statusBar1 = self.CreateStatusBar( 1, wx.ST_SIZEGRIP, wx.ID_ANY )
 		self.m_menubar1 = wx.MenuBar( 0 )
 		self.SetMenuBar( self.m_menubar1 )
@@ -259,40 +260,126 @@ class SearchWindow(wx.Frame):
 		self.Bind(wx.EVT_BUTTON, self.ButtonReturn1, self.m_bpButton28)
 		
 	def runSearch(self, event):
-		r = searchdrives.drivelibrary()
-		searchSelection = self.combo.GetValue()
 		
-		if searchSelection == "Global":
-			list = r.queryDBglobal(self.txt3.GetValue())
-			for i in list:
-				for y in i:
-					print y
+		fr = CallResults()
+		fr.Show(True)
 		
-		elif searchSelection == "File":
-			found = r.queryDBfile(self.txt3.GetValue())
-			for i in found:
-				for y in i:
-					print y
-			
-		elif searchSelection == "Drives":
-			print r.queryDBlibnum(self.txt3.GetValue())
 		
-		elif searchSelection == "Paths":
-			print r.queryDBpath(self.txt3.GetValue())
-			
-		elif searchSelection == "Job":
-			print r.queryDBjob(self.txt3.GetValue())
-			
-		elif searchSelection == "Dates":
-			print r.queryDBdate(self.txt3.GetValue())
-    	
 	def ButtonReturn1(self, event):
 		frame1.m_statusBar1.SetStatusText("Search With EDL")
 		x,y = self.GetPosition() 
 		frame1.SetPosition((x,y)) 
 		self.Show(False)
 		frame1.Show(True)
+		
+
+class CallResults(wx.Frame):
+
+	def __init__(self):
+		wx.Frame.__init__(self, None, -1, 'Programmatic size change')
+		sz = wx.BoxSizer(wx.VERTICAL)
+		pa = AScrolledWindow(self)
+		sz.Add(pa, 1, wx.EXPAND)
+		self.SetSizer(sz)
+		
 	
+
+class AScrolledWindow(wx.ScrolledWindow):
+
+	def __init__(self, parent):
+		self.parent = parent
+		wx.ScrolledWindow.__init__(self, parent, -1, style=wx.TAB_TRAVERSAL)
+
+		gb = wx.GridBagSizer(vgap=0, hgap=3)
+		self.sizer = gb
+		self._labels = []
+		self._show_but = wx.Button(self, -1, "Show")
+		self._hide_but = wx.Button(self, -1, "Hide")
+		gb.Add(self._show_but, (0,0), (1,1))
+		gb.Add(self._hide_but, (0,1), (1,1))
+
+		r = searchdrives.drivelibrary()
+		
+		
+		searchSelection = frame1.frame5.combo.GetValue()
+		
+		searchresults = []
+		
+		if searchSelection == "Global":
+			list = r.queryDBglobal(frame1.frame5.txt3.GetValue())
+			for i in list:
+				for y in i:
+					searchresults.append(y)
+		
+		elif searchSelection == "File":
+			found = r.queryDBfile(frame1.frame5.txt3.GetValue())
+			for i in found:
+				for y in i:
+					searchresults.append(y)
+			
+		elif searchSelection == "Drives":
+			searchresults.append(r.queryDBlibnum(frame1.frame5.txt3.GetValue()))
+		
+		elif searchSelection == "Paths":
+			searchresults.append(r.queryDBpath(frame1.frame5.txt3.GetValue()))
+			
+		elif searchSelection == "Job":
+			searchresults.append(r.queryDBjob(frame1.frame5.txt3.GetValue()))
+			
+		elif searchSelection == "Dates":
+			searchresults.append(r.queryDBdate(frame1.frame5.txt3.GetValue()))
+		newline = ""
+		count = 0
+		list = []
+		for y in range(len(searchresults)):
+			count += 1
+			y = y+1
+			foundselection = searchresults[y-1]
+			
+			
+			
+			
+			for i in range(len(searchresults[y])):
+				count += 1
+				i = i+1
+				foundselectionlistitem = searchresults[y][0]
+				
+				self._labels.append(wx.StaticText(self, -1, str(foundselectionlistitem)))
+				gb.Add(self._labels[-1], (count,1), (1,1))
+			"""
+			else:
+				print "sgdgsg"
+				self._labels.append(wx.StaticText(self, -1, str(foundselection)))
+				gb.Add(self._labels[-1], (y,1), (1,1))
+			"""	
+			#self._labels.append(wx.StaticText(self, -1,newline))
+			self._show_but.Bind(wx.EVT_BUTTON, self.OnShow)
+			self._hide_but.Bind(wx.EVT_BUTTON, self.OnHide)
+			self.SetSizer(self.sizer)
+			fontsz = wx.SystemSettings.GetFont(wx.SYS_SYSTEM_FONT).GetPixelSize()
+			self.SetScrollRate(fontsz.x, fontsz.y)
+			self.EnableScrolling(True,True)
+
+		
+	def OnShow(self, event):
+		for lab in self._labels:
+			self.sizer.Show(lab, True)
+			self.OnInnerSizeChanged()
+	
+	def OnHide(self, event):
+		for lab in self._labels:
+			self.sizer.Show(lab, False)
+			self.OnInnerSizeChanged()
+	
+	def OnInnerSizeChanged(self):
+		w,h = self.sizer.GetMinSize()
+		self.SetVirtualSize((w,h))
+		
+		#self.Layout()
+		#self.Show(True)
+				
+				
+
 app = wx.App(True)
 frame1 = MainWindow(None, "Drive Library")
 app.MainLoop()
