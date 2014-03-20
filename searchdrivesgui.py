@@ -276,7 +276,7 @@ class SearchWindow(wx.Frame):
 class CallResults(wx.Frame):
 
 	def __init__(self):
-		wx.Frame.__init__(self, None, -1, 'Programmatic size change')
+		wx.Frame.__init__(self, None, -1, 'Search Results')
 		sz = wx.BoxSizer(wx.VERTICAL)
 		pa = AScrolledWindow(self)
 		sz.Add(pa, 1, wx.EXPAND)
@@ -340,7 +340,7 @@ class AScrolledWindow(wx.ScrolledWindow):
 				
 				self._labels.append(wx.StaticText(self, -1, str(i)))
 				gb.Add(self._labels[-1], (count,1), (1,1))
-
+				
 		"""		
 		for y in range(len(searchresults)):
 			count += 1
@@ -357,7 +357,6 @@ class AScrolledWindow(wx.ScrolledWindow):
 				gb.Add(self._labels[-1], (count,1), (1,1))
 		"""
 
-		
 		self._labels.append(wx.StaticText(self, -1,newline))
 		self._show_but.Bind(wx.EVT_BUTTON, self.OnShow)
 		self._hide_but.Bind(wx.EVT_BUTTON, self.OnHide)
@@ -365,7 +364,6 @@ class AScrolledWindow(wx.ScrolledWindow):
 		fontsz = wx.SystemSettings.GetFont(wx.SYS_SYSTEM_FONT).GetPixelSize()
 		self.SetScrollRate(fontsz.x, fontsz.y)
 		self.EnableScrolling(True,True)
-		
 		
 	def OnShow(self, event):
 		for lab in self._labels:
