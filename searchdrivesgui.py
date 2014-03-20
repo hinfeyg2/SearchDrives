@@ -328,38 +328,44 @@ class AScrolledWindow(wx.ScrolledWindow):
 			
 		elif searchSelection == "Dates":
 			searchresults.append(r.queryDBdate(frame1.frame5.txt3.GetValue()))
-		newline = ""
+			
+		newline= ""
 		count = 0
-		list = []
+		#THIS CURRENT SEARCH WORKS SLIGHTLY FOR SEARCHING FILES!
+
+		for i in searchresults:
+			#for y in i:
+				count += 1
+				
+				
+				self._labels.append(wx.StaticText(self, -1, str(i)))
+				gb.Add(self._labels[-1], (count,1), (1,1))
+
+		"""		
 		for y in range(len(searchresults)):
 			count += 1
 			y = y+1
 			foundselection = searchresults[y-1]
 			
-			
-			
-			
 			for i in range(len(searchresults[y])):
 				count += 1
 				i = i+1
+				print searchresults[y]
 				foundselectionlistitem = searchresults[y][0]
 				
 				self._labels.append(wx.StaticText(self, -1, str(foundselectionlistitem)))
 				gb.Add(self._labels[-1], (count,1), (1,1))
-			"""
-			else:
-				print "sgdgsg"
-				self._labels.append(wx.StaticText(self, -1, str(foundselection)))
-				gb.Add(self._labels[-1], (y,1), (1,1))
-			"""	
-			#self._labels.append(wx.StaticText(self, -1,newline))
-			self._show_but.Bind(wx.EVT_BUTTON, self.OnShow)
-			self._hide_but.Bind(wx.EVT_BUTTON, self.OnHide)
-			self.SetSizer(self.sizer)
-			fontsz = wx.SystemSettings.GetFont(wx.SYS_SYSTEM_FONT).GetPixelSize()
-			self.SetScrollRate(fontsz.x, fontsz.y)
-			self.EnableScrolling(True,True)
+		"""
 
+		
+		self._labels.append(wx.StaticText(self, -1,newline))
+		self._show_but.Bind(wx.EVT_BUTTON, self.OnShow)
+		self._hide_but.Bind(wx.EVT_BUTTON, self.OnHide)
+		self.SetSizer(self.sizer)
+		fontsz = wx.SystemSettings.GetFont(wx.SYS_SYSTEM_FONT).GetPixelSize()
+		self.SetScrollRate(fontsz.x, fontsz.y)
+		self.EnableScrolling(True,True)
+		
 		
 	def OnShow(self, event):
 		for lab in self._labels:

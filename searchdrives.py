@@ -72,8 +72,8 @@ class drivelibrary:
 					path = ''
 					for j in cats:
 						path += j + '\\'
-					dogs = "INSERT INTO DriveLibrary VALUES('%s', '%s', '%s', '%s', '%s')" % (date, job, driveNum, path, filename)
-					cur.execute(str(dogs))
+					
+					cur.execute("""INSERT INTO DriveLibrary VALUES(?, ?, ?, ?, ?)""", (date, job, driveNum, path, filename))
 				
 				cur.close()	
 		
