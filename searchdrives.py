@@ -7,7 +7,7 @@ import sys
 import datetime
 import unicodedata
 
-dbpath = "./drivelibrary.db"
+dbpath = "\\\\192.168.1.110\\avid\\GavinH\\SearchDrives\\drivelibrary.db"
 
 class drivelibrary:
 	
@@ -66,14 +66,14 @@ class drivelibrary:
 					date = datetime.datetime.today()
 
 					cats = []
-					cats = i.split('/')
+					cats = i.split('\\')
 					filename = cats[-1]
 					del cats[-1]
 					path = ''
 					for j in cats:
 						path += j + '\\'
-					dogs = "INSERT INTO DriveLibrary VALUES('%s', '%s', '%s', '%s', '%s')" % (date, job, driveNum, path, filename)
-					cur.execute(str(dogs))
+					
+					cur.execute("""INSERT INTO DriveLibrary VALUES(?, ?, ?, ?, ?)""", (date, job, driveNum, path, filename))
 				
 				cur.close()	
 		
@@ -170,7 +170,7 @@ class drivelibrary:
 		foundList.append(self.queryDBlibnum(searchQuery))
 		
 		return foundList
-			
+		
 	#This delete method doesn't work.			
 	def deleteDBEntry(self, driveNum):
 		
