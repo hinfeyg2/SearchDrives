@@ -68,6 +68,7 @@ class MainWindow(wx.Frame):
 	def SearchRollButtonOff(self, event):
 		self.m_statusBar1.SetStatusText("")
 
+
 	def Button1Select(self, event):
 		
 		frame2 = DBWindow(None, "Find DB")
@@ -118,7 +119,11 @@ class DBWindow(wx.Frame):
 			openButton.Enable(True)
 		
 		self.m_bpButton28 = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( "./ICONS/backbutton.png", wx.BITMAP_TYPE_ANY ), (20,270), wx.DefaultSize, wx.BU_AUTODRAW )
+		self.m_bpButton28.Bind(wx.EVT_ENTER_WINDOW, self.BackButtonOn)
+		self.m_bpButton28.Bind(wx.EVT_LEAVE_WINDOW, self.BackButtonOff)
+		
 		self.Bind(wx.EVT_BUTTON, self.ButtonReturn1, self.m_bpButton28)
+		
 		
 		
 		self.Layout()
@@ -142,6 +147,12 @@ class DBWindow(wx.Frame):
 		frame1.SetPosition((x,y)) 
 		frame1.Show(True)
 
+	def BackButtonOn(self, event):
+		self.m_statusBar1.SetStatusText("Back")
+
+	def BackButtonOff(self, event):
+		self.m_statusBar1.SetStatusText("")
+
 class DriveWindow(wx.Frame):
 	
 	def __init__(self, parent, title):
@@ -158,6 +169,9 @@ class DriveWindow(wx.Frame):
 		self.DriveStatus = wx.StaticText(self, -1, "",(20,57))
 		#SHIT
 		self.m_bpButton26 = wx.BitmapButton( self, wx.ID_ANY, wx.Bitmap( "./ICONS/backbutton.png", wx.BITMAP_TYPE_ANY ),(18,180), wx.DefaultSize, wx.BU_AUTODRAW )
+		self.m_bpButton26.Bind(wx.EVT_ENTER_WINDOW, self.BackButtonOn)
+		self.m_bpButton26.Bind(wx.EVT_LEAVE_WINDOW, self.BackButtonOff)
+		
 		self.Bind(wx.EVT_BUTTON, self.ParseDir, self.m_bpButton26)
 		self.m_bpButton26.Enable(False)
 	
@@ -209,7 +223,13 @@ class DriveWindow(wx.Frame):
 		frame1.SetPosition((x,y)) 
 		self.Show(False)
 		frame1.Show(True)
-		
+
+	def BackButtonOn(self, event):
+		self.m_statusBar1.SetStatusText("Back")
+
+	def BackButtonOff(self, event):
+		self.m_statusBar1.SetStatusText("")
+	
 class EDLWindow(wx.Frame):
 	
 	def __init__(self, parent, title):
@@ -332,30 +352,74 @@ class AScrolledWindow(wx.ScrolledWindow):
 		newline= ""
 		count = 0
 		#THIS CURRENT SEARCH WORKS SLIGHTLY FOR SEARCHING FILES!
+		
+		mouse = "Mouse!"
+		mouselist = ["Bats","Jacks","Frogs","Cats"]
+		catslist = ["dogs", "People", "Horses"]
+		listmoustlist = [mouselist, catslist]
 
-		for i in searchresults:
-			#for y in i:
-				count += 1
-				
-				
-				self._labels.append(wx.StaticText(self, -1, str(i)))
-				gb.Add(self._labels[-1], (count,1), (1,1))
-				
-		"""		
-		for y in range(len(searchresults)):
-			count += 1
-			y = y+1
-			foundselection = searchresults[y-1]
+
+
+		
+		try:
+			assert not isinstance(searchresults, basestring)
 			
-			for i in range(len(searchresults[y])):
+		except:
+			
+
+			self._labels.append(wx.StaticText(self, -1, str(searchresults)))
+			gb.Add(self._labels[-1], (1,1), (1,1))
+			pass
+		
+		else:
+			
+
+			for i in searchresults:
 				count += 1
-				i = i+1
-				print searchresults[y]
-				foundselectionlistitem = searchresults[y][0]
-				
-				self._labels.append(wx.StaticText(self, -1, str(foundselectionlistitem)))
-				gb.Add(self._labels[-1], (count,1), (1,1))
-		"""
+				try:
+					assert not isinstance(i, (basestring, int))
+					
+				except:
+					
+					
+					self._labels.append(wx.StaticText(self, -1, str(i)))
+					gb.Add(self._labels[-1], (count,1), (1,1))
+					print "1"
+					pass
+
+				else:
+					
+					
+					for y in i:
+						count += 1
+						try:
+							assert not isinstance(y, (basestring, int))
+					
+						except:
+
+							self._labels.append(wx.StaticText(self, -1, str(y)))
+							gb.Add(self._labels[-1], (count,1), (1,1))
+							
+							pass
+						else:
+							for z in y:
+								count += 1
+								
+								try:
+									assert not isinstance(z, (basestring, int))
+
+					
+								except:
+
+									self._labels.append(wx.StaticText(self, -1, str(z)))
+									gb.Add(self._labels[-1], (count,1), (1,1))
+									
+									pass
+									
+								else:
+									pass
+
+
 
 		self._labels.append(wx.StaticText(self, -1,newline))
 		self._show_but.Bind(wx.EVT_BUTTON, self.OnShow)
